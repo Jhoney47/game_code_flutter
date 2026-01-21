@@ -42,8 +42,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     _searchController.dispose();
     super.dispose();
   }
-
-  /// 加载数据（从jsDelivr CDN）
+  /// 加载数据（使用缓存或网络）
   Future<void> _loadData() async {
     setState(() {
       _isLoading = true;
@@ -51,7 +50,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
     });
 
     try {
-      final data = await _repository.fetchGameCodes();
+      // 首次加载：优先使用缓存，网络失败也能显示数据
+      final data = await _repository.fetchGameCodes(forceRefresh: false);
       
       setState(() {
         _gameData = data;
@@ -79,7 +79,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   /// 下拉刷新
   void _onRefresh() async {
     try {
-      final data = await _repository.fetchGameCodes();
+      // 强制刷新：绕过缓存，破除 CDN 缓存，获取最新数据
+      final data = await _repository.fetchGameCodes(forceRefresh: true);
       
       setState(() {
         _gameData = data;
