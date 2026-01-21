@@ -436,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       label: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (icon != null) ..[
+          if (icon != null) ...[
             Icon(
               icon,
               size: 18,
