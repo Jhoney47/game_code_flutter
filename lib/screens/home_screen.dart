@@ -182,19 +182,44 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 const SizedBox(height: 16),
                 Text(
                   '加载失败',
-                  style: theme.textTheme.headlineMedium,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    _getErrorMessage(_errorMessage!),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.brightness == Brightness.dark
+                          ? AppTheme.mutedDark
+                          : AppTheme.mutedLight,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  _errorMessage!,
-                  style: theme.textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Text(
+                    '尝试了多个数据源，均无法访问',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.brightness == Brightness.dark
+                          ? AppTheme.mutedDark.withOpacity(0.7)
+                          : AppTheme.mutedLight.withOpacity(0.7),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton.icon(
                   onPressed: _loadData,
                   icon: const Icon(Icons.refresh),
                   label: const Text('重试'),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  ),
                 ),
               ],
             ),
@@ -398,6 +423,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           ),
       ],
     );
+  }
+
+  /// 获取友好的错误提示消息
+  String _getErrorMessage(String error) {
+    if (error.contains('SocketException') || error.contains('connection abort')) {
+      return '网络连接失败\n请检查您的网络设置';
+    } else if (error.contains('timeout') || error.contains('超时')) {
+      return '请求超时\n请检查网络连接';
+    } else if (error.contains('缓存') || error.contains('cache')) {
+      return '网络连接失败且无缓存数据\n请连接网络后重试';
+    } else if (error.contains('数据源')) {
+      return '所有数据源均无法访问\n请稍后重试或检查网络';
+    } else {
+      return '加载失败\n请稍后重试';
+    }
   }
 
   Widget _buildSortChip(String label, String value) {
