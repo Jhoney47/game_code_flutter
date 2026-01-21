@@ -49,7 +49,7 @@ class Logger {
   }
   
   /// 网络请求日志
-  static void network(String message, {String? url, int? statusCode}) {
+  static void network(String message, {String? url, int? statusCode, String? tag}) {
     if (!isEnabled) return;
     final timestamp = DateTime.now().toString().substring(11, 23);
     final status = statusCode != null ? ' [$statusCode]' : '';
