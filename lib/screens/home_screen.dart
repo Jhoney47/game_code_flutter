@@ -221,14 +221,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '游戏码宝',
+                          'GameCode',
                           style: theme.textTheme.headlineLarge?.copyWith(
                             fontSize: 24,
+                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                        Text(
-                          '收集最新游戏兑换码 · 云端同步',
-                          style: theme.textTheme.bodySmall,
                         ),
                       ],
                     ),
@@ -379,14 +376,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     padding: const EdgeInsets.only(bottom: 12),
                     child: CodeCard(
                       code: code,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CodeDetailScreen(code: code),
-                          ),
-                        );
-                      },
                     ),
                   );
                 },
