@@ -277,11 +277,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   TabBar(
                     controller: _tabController,
                     isScrollable: true,
-                    indicatorColor: AppTheme.primaryColor,
+                    indicator: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: AppTheme.primaryColor.withOpacity(0.1),
+                    ),
+                    indicatorSize: TabBarIndicatorSize.tab,
+                    indicatorPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                     labelColor: AppTheme.primaryColor,
                     unselectedLabelColor: theme.brightness == Brightness.dark
                         ? AppTheme.mutedDark
                         : AppTheme.mutedLight,
+                    labelStyle: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                    unselectedLabelStyle: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                    ),
                     tabs: [
                       const Tab(text: '全部'),
                       ..._gameData!.games.map((game) => Tab(text: game.gameName)),
@@ -330,11 +343,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _buildTypeChip('全部类型', 'all'),
+                      _buildTypeChip('全部类型', 'all', null),
                       const SizedBox(width: 8),
-                      _buildTypeChip('♾️ 永久', 'permanent'),
+                      _buildTypeChip('永久有效', 'permanent', Icons.all_inclusive),
                       const SizedBox(width: 8),
-                      _buildTypeChip('⏰ 限时', 'limited'),
+                      _buildTypeChip('限时兑换', 'limited', Icons.access_time),
                     ],
                   ),
                 ),
@@ -399,17 +412,41 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         });
       },
       selectedColor: AppTheme.primaryColor,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : null,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      backgroundColor: Colors.grey.shade200,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
+          width: 1.5,
+        ),
       ),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.grey.shade700,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 13,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      elevation: isSelected ? 2 : 0,
     );
   }
 
-  Widget _buildTypeChip(String label, String value) {
+  Widget _buildTypeChip(String label, String value, IconData? icon) {
     final isSelected = _selectedType == value;
     return ChoiceChip(
-      label: Text(label),
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ..[
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected ? Colors.white : AppTheme.primaryColor,
+            ),
+            const SizedBox(width: 4),
+          ],
+          Text(label),
+        ],
+      ),
       selected: isSelected,
       onSelected: (selected) {
         setState(() {
@@ -418,10 +455,21 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         });
       },
       selectedColor: AppTheme.primaryColor,
-      labelStyle: TextStyle(
-        color: isSelected ? Colors.white : null,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      backgroundColor: Colors.grey.shade200,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(
+          color: isSelected ? AppTheme.primaryColor : Colors.grey.shade300,
+          width: 1.5,
+        ),
       ),
+      labelStyle: TextStyle(
+        color: isSelected ? Colors.white : Colors.grey.shade700,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        fontSize: 13,
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      elevation: isSelected ? 2 : 0,
     );
   }
 }

@@ -14,5 +14,5 @@
 ## 需要修改的文件
 - [x] lib/screens/home_screen.dart - 修改标题和副标题
 - [x] lib/widgets/code_card.dart - 重写卡片组件
-- [ ] 测试所有功能
-- [ ] 推送到GitHub
+- [x] 测试所有功能
+- [x] 推送到GitHub
