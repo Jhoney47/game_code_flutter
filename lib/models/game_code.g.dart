@@ -7,16 +7,16 @@ part of 'game_code.dart';
 // **************************************************************************
 
 GameCode _$GameCodeFromJson(Map<String, dynamic> json) => GameCode(
-      code: json['code'] as String,
-      rewardDescription: json['rewardDescription'] as String,
-      sourcePlatform: json['sourcePlatform'] as String,
+      code: json['code'] as String? ?? '',
+      rewardDescription: json['rewardDescription'] as String? ?? '',
+      sourcePlatform: json['sourcePlatform'] as String? ?? '',
       sourceUrl: json['sourceUrl'] as String?,
       expireDate: json['expireDate'] as String?,
-      status: json['status'] as String,
-      codeType: json['codeType'] as String,
+      status: json['status'] as String? ?? 'active',
+      codeType: json['codeType'] as String? ?? 'limited',
       publishDate: json['publishDate'] as String?,
-      verificationCount: json['verificationCount'] as int,
-      reviewStatus: json['reviewStatus'] as String,
+      verificationCount: (json['verificationCount'] as num?)?.toInt() ?? 0,
+      reviewStatus: json['reviewStatus'] as String? ?? 'pending',
     );
 
 Map<String, dynamic> _$GameCodeToJson(GameCode instance) => <String, dynamic>{
@@ -33,8 +33,8 @@ Map<String, dynamic> _$GameCodeToJson(GameCode instance) => <String, dynamic>{
     };
 
 GameData _$GameDataFromJson(Map<String, dynamic> json) => GameData(
-      gameName: json['gameName'] as String,
-      codeCount: json['codeCount'] as int,
+      gameName: json['gameName'] as String? ?? '',
+      codeCount: (json['codeCount'] as num?)?.toInt() ?? 0,
       codes: (json['codes'] as List<dynamic>)
           .map((e) => GameCode.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -48,9 +48,9 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
 
 GameCodeResponse _$GameCodeResponseFromJson(Map<String, dynamic> json) =>
     GameCodeResponse(
-      version: json['version'] as String,
-      lastUpdated: json['lastUpdated'] as String,
-      totalCodes: json['totalCodes'] as int,
+      version: json['version'] as String? ?? '1.0',
+      lastUpdated: json['lastUpdated'] as String? ?? '',
+      totalCodes: (json['totalCodes'] as num?)?.toInt() ?? 0,
       games: (json['games'] as List<dynamic>)
           .map((e) => GameData.fromJson(e as Map<String, dynamic>))
           .toList(),
