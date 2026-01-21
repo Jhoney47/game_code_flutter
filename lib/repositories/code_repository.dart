@@ -39,10 +39,25 @@ class CodeRepository {
 
       if (response.statusCode == 200) {
         // 解析UTF-8编码的JSON数据
-        final jsonData = json.decode(utf8.decode(response.bodyBytes));
-        print('✅ 数据获取成功，共 ${jsonData['totalCodes']} 个兑换码');
-        
-        return GameCodeResponse.fromJson(jsonData);
+        try {
+          final jsonData = json.decode(utf8.decode(response.bodyBytes));
+          
+          // 验证JSON数据完整性
+          if (jsonData == null || jsonData is! Map<String, dynamic>) {
+            throw Exception('数据格式错误：返回的不是有效的JSON对象');
+          }
+          
+          if (!jsonData.containsKey('games') || jsonData['games'] == null) {
+            throw Exception('数据格式错误：缺少games字段');
+          }
+          
+          print('✅ 数据获取成功，共 ${jsonData['totalCodes'] ?? 0} 个兑换码');
+          
+          return GameCodeResponse.fromJson(jsonData);
+        } catch (e) {
+          print('❌ JSON解析失败: $e');
+          throw Exception('数据解析失败，请稍后重试');
+        }
       } else {
         throw Exception('服务器返回错误: ${response.statusCode}');
       }
