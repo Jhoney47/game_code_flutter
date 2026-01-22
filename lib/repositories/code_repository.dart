@@ -459,8 +459,10 @@ class CodeRepository {
     Logger.info('提交举报: $gameName - $code - $reportType');
     
     try {
-      // TODO: 这里需要后台管理系统的 API 地址
-      // 目前先保存到本地
+      // 后台管理系统的 API 地址（可配置）
+      const String backendUrl = 'https://8888-i6i3zoist21e8jkpavtmy-c3059b44.sg1.manus.computer';
+      
+      // 先保存到本地（作为备份）
       final prefs = await SharedPreferences.getInstance();
       final reports = prefs.getStringList('code_reports') ?? [];
       
@@ -473,6 +475,26 @@ class CodeRepository {
       
       reports.add(jsonEncode(report));
       await prefs.setStringList('code_reports', reports);
+      
+      // 尝试提交到后台服务器
+      try {
+        final response = await http.post(
+          Uri.parse('$backendUrl/api/reports'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(report),
+        ).timeout(const Duration(seconds: 10));
+        
+        if (response.statusCode == 200) {
+          final result = jsonDecode(response.body);
+          if (result['success'] == true) {
+            Logger.success('举报已提交到后台服务器');
+          }
+        } else {
+          Logger.warning('后台服务器返回错误: ${response.statusCode}');
+        }
+      } catch (e) {
+        Logger.warning('无法连接到后台服务器，举报已保存在本地', error: e);
+      }
       
       Logger.success('举报提交成功');
       return true;
