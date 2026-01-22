@@ -447,4 +447,50 @@ class CodeRepository {
 
     return sortedCodes;
   }
+
+  /// 提交举报
+  /// 
+  /// 将举报信息发送到后台管理系统
+  Future<bool> submitReport({
+    required String gameName,
+    required String code,
+    required String reportType, // 'invalid' 或 'expired'
+  }) async {
+    Logger.info('提交举报: $gameName - $code - $reportType');
+    
+    try {
+      // TODO: 这里需要后台管理系统的 API 地址
+      // 目前先保存到本地
+      final prefs = await SharedPreferences.getInstance();
+      final reports = prefs.getStringList('code_reports') ?? [];
+      
+      final report = {
+        'gameName': gameName,
+        'code': code,
+        'reportType': reportType,
+        'reportTime': DateTime.now().toIso8601String(),
+      };
+      
+      reports.add(jsonEncode(report));
+      await prefs.setStringList('code_reports', reports);
+      
+      Logger.success('举报提交成功');
+      return true;
+    } catch (e) {
+      Logger.error('举报提交失败', error: e);
+      return false;
+    }
+  }
+
+  /// 获取本地举报记录
+  Future<List<Map<String, dynamic>>> getLocalReports() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final reports = prefs.getStringList('code_reports') ?? [];
+      return reports.map((r) => jsonDecode(r) as Map<String, dynamic>).toList();
+    } catch (e) {
+      Logger.error('获取举报记录失败', error: e);
+      return [];
+    }
+  }
 }
