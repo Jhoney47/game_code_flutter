@@ -493,7 +493,7 @@ class CodeRepository {
           Logger.warning('后台服务器返回错误: ${response.statusCode}');
         }
       } catch (e) {
-        Logger.warning('无法连接到后台服务器，举报已保存在本地', error: e);
+        Logger.warning('无法连接到后台服务器，举报已保存在本地: $e');
       }
       
       Logger.success('举报提交成功');
