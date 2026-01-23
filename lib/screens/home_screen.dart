@@ -321,6 +321,8 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       fontWeight: FontWeight.normal,
                       fontSize: 14,
                     ),
+                    dividerColor: Colors.transparent, // 去掉下划线
+                    tabAlignment: TabAlignment.start, // 左对齐
                     tabs: [
                       const Tab(text: '全部'),
                       ..._gameData!.games.map((game) => Tab(text: game.gameName)),
