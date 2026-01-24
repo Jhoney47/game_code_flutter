@@ -459,8 +459,10 @@ class CodeRepository {
     Logger.info('提交举报: $gameName - $code - $reportType');
     
     try {
-      // 后台管理系统的 API 地址（可配置）
-      const String backendUrl = 'https://8888-i6i3zoist21e8jkpavtmy-c3059b44.sg1.manus.computer';
+      // 后台管理系统的 API 地址
+      // 注意：如果您在真机上运行，请将下面的 IP 修改为您电脑的局域网 IP (例如 http://192.168.1.5:8888)
+      // 如果使用 Android 模拟器，可以使用 http://10.0.2.2:8888
+      const String backendUrl = 'http://192.168.1.xxx:8888';
       
       // 先保存到本地（作为备份）
       final prefs = await SharedPreferences.getInstance();
