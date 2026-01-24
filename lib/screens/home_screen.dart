@@ -7,7 +7,12 @@ import '../theme/app_theme.dart';
 import 'code_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final GameCodeResponse? initialData;
+  
+  const HomeScreen({
+    super.key, 
+    this.initialData,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -32,7 +37,23 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _loadData();
+    if (widget.initialData != null) {
+      _gameData = widget.initialData;
+      _isLoading = false;
+      _initTabController();
+      _applyFilters();
+    } else {
+      _loadData();
+    }
+  }
+
+  void _initTabController() {
+    if (_gameData == null) return;
+    _tabController = TabController(
+      length: _gameData!.games.length + 1,
+      vsync: this,
+    );
+    _tabController!.addListener(_onTabChanged);
   }
 
   @override
@@ -58,12 +79,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
         _isLoading = false;
         
         // 初始化TabController（动态生成Tabs）
-        _tabController = TabController(
-          length: data.games.length + 1, // +1 for "全部" tab
-          vsync: this,
-        );
-        
-        _tabController!.addListener(_onTabChanged);
+        _initTabController();
         
         // 初始显示所有兑换码
         _applyFilters();
@@ -323,6 +339,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     ),
                     dividerColor: Colors.transparent, // 去掉下划线
                     tabAlignment: TabAlignment.start, // 左对齐
+                    padding: const EdgeInsets.symmetric(horizontal: 16), // 添加左右内边距
                     tabs: [
                       const Tab(text: '全部'),
                       ..._gameData!.games.map((game) => Tab(text: game.gameName)),

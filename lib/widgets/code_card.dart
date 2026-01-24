@@ -32,169 +32,159 @@ class CodeCard extends StatelessWidget {
 
     return Opacity(
       opacity: cardOpacity,
-      child: Stack(
-        children: [
-          Card(
-            color: cardColor,
-            elevation: isExpiringSoon ? 4 : 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: isExpiringSoon 
-                  ? BorderSide(color: AppTheme.warningColor, width: 2)
-                  : BorderSide.none,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: Card(
+        color: cardColor,
+        elevation: isExpiringSoon ? 4 : 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: isExpiringSoon 
+              ? BorderSide(color: AppTheme.warningColor, width: 2)
+              : BorderSide.none,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 游戏名称和举报按钮
+              Row(
                 children: [
-                  // 游戏名称和图标
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          code.gameName,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 32), // 为右上角举报按钮留出空间
-                      const Text('🎮', style: TextStyle(fontSize: 20)),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // 兑换码
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: isDark 
-                          ? AppTheme.backgroundDark 
-                          : AppTheme.backgroundLight,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                  Expanded(
                     child: Text(
-                      code.code,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontFamily: 'monospace',
+                      code.gameName,
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 1.2,
                       ),
-                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // 奖励描述
-                  Row(
-                    children: [
-                      const Text('🎁', style: TextStyle(fontSize: 16)),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          code.rewardDescription,
-                          style: theme.textTheme.bodyMedium,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                  const SizedBox(width: 8),
+                  // 举报按钮 (直接放在这里，不使用Positioned)
+                  GestureDetector(
+                    onTap: () => _showReportDialog(context),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.1),
+                        shape: BoxShape.circle,
                       ),
-                    ],
-                  ),
-                  
-                  const SizedBox(height: 12),
-                  
-                  // 底部信息栏：类型标签 + 截止日期/警告 + 复制按钮
-                  Row(
-                    children: [
-                      // 类型标签（永久/限时）
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: code.codeType == 'permanent'
-                              ? Colors.green.withOpacity(0.15)
-                              : Colors.blue.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              code.codeType == 'permanent' ? '♾️' : '⏰',
-                              style: const TextStyle(fontSize: 14),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              code.codeType == 'permanent' ? '永久' : '限时',
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: code.codeType == 'permanent'
-                                    ? Colors.green[700]
-                                    : Colors.blue[700],
-                              ),
-                            ),
-                          ],
-                        ),
+                      child: const Icon(
+                        Icons.warning_amber_rounded,
+                        size: 20,
+                        color: Colors.grey,
                       ),
-                      
-                      const SizedBox(width: 8),
-                      
-                      // 截止日期或警告信息
-                      Expanded(
-                        child: _buildExpiryInfo(theme, isExpiringSoon, daysUntilExpiry, isActive),
-                      ),
-                      
-                      const SizedBox(width: 8),
-                      
-                      // 一键复制按钮
-                      ElevatedButton.icon(
-                        onPressed: () => _copyToClipboard(context),
-                        icon: const Icon(Icons.copy, size: 16),
-                        label: const Text('复制'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
-            ),
-          ),
-          
-          // 右上角举报按钮
-          Positioned(
-            top: 8,
-            right: 8,
-            child: GestureDetector(
-              onTap: () => _showReportDialog(context),
-              child: Container(
-                padding: const EdgeInsets.all(6),
+              
+              const SizedBox(height: 12),
+              
+              // 兑换码
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: Colors.grey.withOpacity(0.2),
-                  shape: BoxShape.circle,
+                  color: isDark 
+                      ? AppTheme.backgroundDark 
+                      : AppTheme.backgroundLight,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.flag_outlined,
-                  size: 18,
-                  color: Colors.grey,
+                child: Text(
+                  code.code,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontFamily: 'monospace',
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
+              
+              const SizedBox(height: 12),
+              
+              // 奖励描述
+              Row(
+                children: [
+                  const Text('🎁', style: TextStyle(fontSize: 16)),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      code.rewardDescription,
+                      style: theme.textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // 底部信息栏：类型标签 + 截止日期/警告 + 复制按钮
+              Row(
+                children: [
+                  // 类型标签（永久/限时）
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: code.codeType == 'permanent'
+                          ? Colors.green.withOpacity(0.15)
+                          : Colors.blue.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          code.codeType == 'permanent' ? '♾️' : '⏰',
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          code.codeType == 'permanent' ? '永久' : '限时',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: code.codeType == 'permanent'
+                                ? Colors.green[700]
+                                : Colors.blue[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(width: 8),
+                  
+                  // 截止日期或警告信息
+                  Expanded(
+                    child: _buildExpiryInfo(theme, isExpiringSoon, daysUntilExpiry, isActive),
+                  ),
+                  
+                  const SizedBox(width: 8),
+                  
+                  // 一键复制按钮
+                  ElevatedButton.icon(
+                    onPressed: () => _copyToClipboard(context),
+                    icon: const Icon(Icons.copy, size: 16),
+                    label: const Text('复制'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 2,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

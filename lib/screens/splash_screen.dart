@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../models/game_code.dart';
+import '../repositories/code_repository.dart';
 import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -42,26 +44,43 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
     ));
 
-    // 启动动画
+    // 启动动画和加载数据
     _controller.forward();
+    _loadDataAndNavigate();
+  }
 
-    // 2秒后跳转到主页
-    Timer(const Duration(seconds: 2), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 500),
-          ),
-        );
-      }
-    });
+  Future<void> _loadDataAndNavigate() async {
+    // 最小等待时间（确保动画完整播放）
+    final minWait = Future.delayed(const Duration(seconds: 2));
+    
+    // 加载数据
+    final repository = CodeRepository();
+    GameCodeResponse? data;
+    try {
+      data = await repository.fetchGameCodes(forceRefresh: false);
+    } catch (e) {
+      // 加载失败也继续进入，主页会处理错误或再次尝试
+      debugPrint('Splash load error: $e');
+    }
+
+    // 等待动画完成
+    await minWait;
+
+    if (mounted) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => HomeScreen(initialData: data),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: animation,
+              child: child,
+            );
+          },
+          transitionDuration: const Duration(milliseconds: 500),
+        ),
+      );
+    }
+  }
   }
 
   @override
@@ -131,14 +150,19 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     ),
                     const SizedBox(height: 48),
                     // 加载指示器
-                    SizedBox(
-                      width: 40,
-                      height: 40,
                       child: CircularProgressIndicator(
                         strokeWidth: 3,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           isDark ? Colors.white70 : const Color(0xFF2196F3),
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      '正在加载云端数据...',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark ? Colors.white60 : Colors.black45,
                       ),
                     ),
                   ],
