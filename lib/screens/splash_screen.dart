@@ -81,7 +81,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       );
     }
   }
-  }
 
   @override
   void dispose() {
@@ -150,11 +149,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     ),
                     const SizedBox(height: 48),
                     // 加载指示器
-                      child: CircularProgressIndicator(
-                        strokeWidth: 3,
-                        valueColor: AlwaysStoppedAnimation<Color>(
-                          isDark ? Colors.white70 : const Color(0xFF2196F3),
-                        ),
+                    CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isDark ? Colors.white70 : const Color(0xFF2196F3),
                       ),
                     ),
                     const SizedBox(height: 16),
